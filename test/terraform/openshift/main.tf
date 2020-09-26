@@ -61,18 +61,6 @@ resource "null_resource" "aro" {
   }
 
   provisioner "local-exec" {
-    command = <<EOF
-    apiServer=$(az aro show -g ${azurerm_resource_group.test.name} -n ${local.random_name} --query apiserverProfile.url -o tsv)
-    kubeUser=$(az aro list-credentials -g ${azurerm_resource_group.test.name} -n ${local.random_name} | jq -r .kubeadminUsername)
-    kubePassword=$(az aro list-credentials -g ${azurerm_resource_group.test.name} -n ${local.random_name} | jq -r .kubeadminPassword)
-
-    for i in {1..5}; do oc login "$apiServer" -u "$kubeUser" -p "$kubePassword" && break || sleep 2; done
-
-    oc new-project consul
-    EOF
-  }
-
-  provisioner "local-exec" {
     when    = destroy
     command = "az aro delete --resource-group ${azurerm_resource_group.test.name} --name ${local.random_name} --yes"
   }
