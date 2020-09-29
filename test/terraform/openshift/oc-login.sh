@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 set -e
 
@@ -10,6 +10,6 @@ kubeUser=$(az aro list-credentials -g "$resource_group" -n "$cluster_name" | jq 
 kubePassword=$(az aro list-credentials -g "$resource_group" -n "$cluster_name" | jq -r .kubeadminPassword)
 
 echo "Logging in"
-for i in {1..5}; do oc login "$apiServer" -u "$kubeUser" -p "$kubePassword" && break; sleep 2; done
+for i in {1..20}; do oc login "$apiServer" -u "$kubeUser" -p "$kubePassword" && break; sleep 5; done
 echo "Creating the 'consul' project"
 oc new-project consul

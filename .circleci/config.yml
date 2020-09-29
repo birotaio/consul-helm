@@ -172,10 +172,6 @@ jobs:
             az login --service-principal -u "$ARM_CLIENT_ID" -p "$ARM_CLIENT_SECRET" --tenant "$ARM_TENANT_ID" > /dev/null
             terraform apply -auto-approve
 
-            resource_group=$(terraform output -json | jq -r .resource_group.value)
-            cluster_name=$(terraform output -json | jq -r .cluster_name.value)
-            ./oc-login.sh "$resource_group" "$cluster_name"
-
       # Restore go module cache if there is one
       - restore_cache:
           keys:

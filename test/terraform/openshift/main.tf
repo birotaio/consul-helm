@@ -61,6 +61,11 @@ resource "null_resource" "aro" {
   }
 
   provisioner "local-exec" {
+    command = "./oc-login.sh ${azurerm_resource_group.test.name} ${local.random_name}"
+    interpreter = ["/bin/bash", "-c"]
+  }
+
+  provisioner "local-exec" {
     when    = destroy
     command = "az aro delete --resource-group ${azurerm_resource_group.test.name} --name ${local.random_name} --yes"
   }
