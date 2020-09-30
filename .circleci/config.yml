@@ -156,6 +156,7 @@ jobs:
   acceptance-openshift:
     environment:
       - TEST_RESULTS: /tmp/test-results
+      - OC_NAME: consul-helm-test-2757871175
     docker:
       # This image is build from test/docker/Test.dockerfile
       - image: hashicorpdev/consul-helm-test:0.6.0
@@ -164,13 +165,11 @@ jobs:
       - checkout
 
       - run:
-          name: terraform init & apply
+          name: oc login
           working_directory: test/terraform/openshift
           command: |
-            terraform init
-
             az login --service-principal -u "$ARM_CLIENT_ID" -p "$ARM_CLIENT_SECRET" --tenant "$ARM_TENANT_ID" > /dev/null
-            terraform apply -auto-approve
+            ./oc-login.sh "$OC_NAME" "$OC_NAME"
 
       # Restore go module cache if there is one
       - restore_cache:
@@ -193,13 +192,6 @@ jobs:
           path: /tmp/test-results
       - store_artifacts:
           path: /tmp/test-results
-
-      - run:
-          name: terraform destroy
-          working_directory: test/terraform/openshift
-          command: |
-            terraform destroy -auto-approve
-          when: always
 
   update-helm-charts-index:
     docker:
