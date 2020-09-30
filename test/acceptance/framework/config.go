@@ -54,7 +54,6 @@ func (t *TestConfig) HelmValuesFromConfig() (map[string]string, error) {
 		setIfNotEmpty(helmValues, "server.enterpriseLicense.secretKey", t.EnterpriseLicenseSecretKey)
 	}
 
-	// todo add tests
 	if t.EnableOpenshift {
 		setIfNotEmpty(helmValues, "global.openshift.enabled", "true")
 	}
