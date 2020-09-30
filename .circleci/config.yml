@@ -156,7 +156,8 @@ jobs:
   acceptance-openshift:
     environment:
       - TEST_RESULTS: /tmp/test-results
-      - OC_NAME: consul-helm-test-2757871175
+      - OC_PRIMARY_NAME: consul-helm-test-2757871175
+      - OC_SECONDARY_NAME: consul-helm-test-3737660519
     docker:
       # This image is build from test/docker/Test.dockerfile
       - image: hashicorpdev/consul-helm-test:0.6.0
@@ -169,7 +170,8 @@ jobs:
           working_directory: test/terraform/openshift
           command: |
             az login --service-principal -u "$ARM_CLIENT_ID" -p "$ARM_CLIENT_SECRET" --tenant "$ARM_TENANT_ID" > /dev/null
-            ./oc-login.sh "$OC_NAME" "$OC_NAME"
+            KUBECONFIG="$HOME/.kube/$OC_PRIMARY_NAME" ./oc-login.sh "$OC_PRIMARY_NAME" "$OC_PRIMARY_NAME"
+            KUBECONFIG="$HOME/.kube/$OC_SECONDARY_NAME" ./oc-login.sh "$OC_SECONDARY_NAME" "$OC_SECONDARY_NAME"
 
       # Restore go module cache if there is one
       - restore_cache:
@@ -185,6 +187,9 @@ jobs:
           command: |
             gotestsum --junitfile "$TEST_RESULTS/gotestsum-report.xml" -- ./... -p 1 -timeout 20m -failfast \
               -enable-openshift \
+              -enable-multi-cluster \
+              -kubeconfig="$HOME/.kube/$OC_PRIMARY_NAME" \
+              -secondary-kubeconfig="$HOME/.kube/$OC_SECONDARY_NAME" \
               -debug-directory="$TEST_RESULTS/debug" \
               -consul-k8s-image=hashicorpdev/consul-k8s:latest
 
