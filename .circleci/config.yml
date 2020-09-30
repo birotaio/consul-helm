@@ -187,6 +187,7 @@ jobs:
           command: |
             gotestsum --junitfile "$TEST_RESULTS/gotestsum-report.xml" -- ./... -p 1 -timeout 20m -failfast \
               -enable-openshift \
+              -enable-enterprise \
               -enable-multi-cluster \
               -kubeconfig="$HOME/.kube/$OC_PRIMARY_NAME" \
               -secondary-kubeconfig="$HOME/.kube/$OC_SECONDARY_NAME" \
