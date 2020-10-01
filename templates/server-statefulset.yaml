@@ -84,7 +84,7 @@ spec:
         {{- end }}
         {{- if $externalEnabled }}
         - name: tmp
-          emptydir: {}
+          emptyDir: {}
         {{- end }}
         {{- range .Values.server.extraVolumes }}
         - name: userconfig-{{ .name }}
